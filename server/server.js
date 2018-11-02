@@ -110,19 +110,16 @@ app.get('/users/me', authenticate,  (req, res) => {
 
 //POST /users/login {email, password}
 app.post('/users/login', (req, res) => {
-    var body = _.pick(req.body, ['email','password']);
-    
-
+    var body = _.pick(req.body, ['email', 'password']);
+  
     User.findByCredentials(body.email, body.password).then((user) => {
-        //res.send(user); -- generate new token instead of just sending back user
-        return user.generateAuthToken(user).then((token) => {
-            res.header('x-auth', token).send(user);
-        
+      return user.generateAuthToken().then((token) => {
+        res.header('x-auth', token).send(user);
+      });
     }).catch((e) => {
-        res.status(400).send();
+      res.status(400).send();
     });
-    });
-});
+  });
 app.listen(port, () => {
     console.log(`Started on port ${port}`)
 });
